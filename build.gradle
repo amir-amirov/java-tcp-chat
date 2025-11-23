@@ -51,7 +51,8 @@ tasks.register('serverJar', Jar) {
 
 tasks.register('clientJar', Jar) {
     group = 'build'
-    archiveBaseName = 'chat-client'
+    archiveBaseName = 'client'
+    archiveVersion = '1.0'
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 

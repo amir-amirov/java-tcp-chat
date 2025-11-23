@@ -1,0 +1,22 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: chat
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - "5431:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  app:
+    restart: always
+    build: .
+    depends_on:
+      - db
+    ports:
+      - "8090:8090"
+
+volumes:
+  pgdata:
