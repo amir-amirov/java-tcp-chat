@@ -1,8 +1,13 @@
 package kz.shift.chat.server;
 
 import kz.shift.chat.common.config.Config;
+import kz.shift.chat.common.dto.DtoType;
 import kz.shift.chat.server.db.DatabaseManager;
 import kz.shift.chat.server.handler.ClientHandler;
+import kz.shift.chat.server.handler.impl.Dispatcher;
+import kz.shift.chat.server.handler.impl.JoinHandler;
+import kz.shift.chat.server.handler.impl.MessageHandler;
+import kz.shift.chat.server.handler.impl.UnknownHandler;
 import kz.shift.chat.server.repository.MessageRepository;
 import kz.shift.chat.server.repository.MessageRepositoryImpl;
 import kz.shift.chat.server.service.chat.ChatService;
@@ -34,11 +39,17 @@ public class ChatServer {
     }
 
     public static void start() {
+
         DataSource dataSource = DatabaseManager.getDataSource();
         MessageRepository messageRepository = new MessageRepositoryImpl(dataSource);
 
         MessageService messageService = new MessageServiceImpl(messageRepository);
         ChatService chatService = new ChatServiceImpl(messageService);
+
+        Dispatcher dispatcher = new Dispatcher();
+        dispatcher.register(DtoType.JOIN, new JoinHandler(chatService));
+        dispatcher.register(DtoType.MESSAGE, new MessageHandler(chatService, messageService));
+        dispatcher.register(DtoType.ERROR, new UnknownHandler(chatService));
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             logger.info("Chat server started on port {}", PORT);
@@ -48,7 +59,7 @@ public class ChatServer {
                     Socket client = serverSocket.accept();
                     client.setSoTimeout(TIMEOUT);
 
-                    clientExecutor.submit(new ClientHandler(client, chatService));
+                    clientExecutor.submit(new ClientHandler(client, chatService, dispatcher));
                 } catch (IOException e) {
                     logger.error("Failed to accept client connection", e);
                 }

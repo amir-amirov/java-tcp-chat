@@ -64,7 +64,7 @@ public class NetworkClient {
 
     public void sendMessage(String username, String text) {
         if (!text.isEmpty() && connected && chatClient.isJoined()) {
-            MessageDTO message = new MessageDTO(null, username, text, LocalDateTime.now());
+            MessageDTO message = new MessageDTO(null, username, text, null);
             String json = JsonMapper.toJson(message);
             out.println(json);
         }

@@ -69,7 +69,7 @@ public final class DatabaseManager {
             return new String(is.readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             logger.error("Failed to read commands from scheme file: {}", file, e);
-            throw new RuntimeException("Failed to read scheme file.");
+            throw new RuntimeException("Failed to read scheme file.", e);
         }
     }
 }

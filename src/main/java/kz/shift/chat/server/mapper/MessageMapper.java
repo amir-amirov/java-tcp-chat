@@ -7,12 +7,12 @@ public final class MessageMapper {
     private MessageMapper() {}
 
     public static MessageDTO toMessageDTO(Message message) {
-        MessageDTO messageDTO = new MessageDTO();
-        messageDTO.setId(message.getId());
-        messageDTO.setSender(message.getSender());
-        messageDTO.setText(message.getText());
-        messageDTO.setCreatedAt(message.getCreatedAt());
-        return messageDTO;
+        return new MessageDTO(
+                message.getId(),
+                message.getSender(),
+                message.getText(),
+                message.getCreatedAt()
+        );
     }
 
     public static Message toMessage(MessageDTO messageDTO) {
