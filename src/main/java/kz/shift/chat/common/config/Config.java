@@ -9,8 +9,9 @@ import java.util.Properties;
 
 public final class Config {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
-    private static final Properties PROPERTIES = new Properties();
+    private static final Logger logger = LoggerFactory.getLogger(Config.class);
+    private static final Properties properties = new Properties();
+    private static final String CONFIG_FILE_NAME = "application.properties";
 
     static {
         load();
@@ -19,16 +20,16 @@ public final class Config {
     private Config() {}
 
     private static void load() {
-        try (InputStream inputStream = Config.class.getClassLoader().getResourceAsStream("application.properties")) {
-            PROPERTIES.load(inputStream);
+        try (InputStream inputStream = Config.class.getClassLoader().getResourceAsStream(CONFIG_FILE_NAME)) {
+            properties.load(inputStream);
         } catch (IOException e) {
-            LOGGER.error("Failed to load config file");
+            logger.error("Failed to load config file: ", e);
             throw new RuntimeException("Failed to load config file");
         }
     }
 
     public static String getString(String key) {
-        String property = PROPERTIES.getProperty(key);
+        String property = properties.getProperty(key);
         if (property == null) {
             throw new RuntimeException("Property for %s does exist".formatted(key));
         }
@@ -36,7 +37,7 @@ public final class Config {
     }
 
     public static Integer getInteger(String key) {
-        String property = PROPERTIES.getProperty(key);
+        String property = properties.getProperty(key);
         if (property == null) {
             throw new RuntimeException("Property for %s does exist".formatted(key));
         }
